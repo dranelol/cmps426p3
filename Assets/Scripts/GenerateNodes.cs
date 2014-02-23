@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class GenerateNodes : MonoBehaviour {
     public int NodesX;
@@ -10,10 +11,17 @@ public class GenerateNodes : MonoBehaviour {
 
     public GameObject node;
 
+    private GameObject[,] nodeMap;
+
+    private Dictionary<Vector3, GameObject> nodeDict;
+
 
 
     private void CreateNodes()
     {
+        nodeMap = new GameObject[NodesX, NodesY];
+        nodeDict = new Dictionary<Vector3, GameObject>();
+
         for (int i = 0; i < NodesX; i++)
         {
             for (int j = 0; j < NodesX; j++)
@@ -22,6 +30,9 @@ public class GenerateNodes : MonoBehaviour {
                 GameObject newNode = (GameObject)Instantiate(node, newPosition, transform.rotation);
                 newNode.renderer.material.color = Color.white;
                 newNode.transform.parent = transform;
+                nodeMap[i, j] = newNode;
+
+                nodeDict[newPosition] = newNode;
             }
         }
 
@@ -50,6 +61,10 @@ public class GenerateNodes : MonoBehaviour {
 	// Update is called once per frame
 	void Update () 
     {
+        if (Input.GetKeyDown(KeyCode.Return) == true)
+        {
+
+        }
 	    
 	}
 
