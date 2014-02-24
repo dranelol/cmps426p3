@@ -13,7 +13,7 @@ public class GenerateNodes : MonoBehaviour {
     public GameObject AI;
     public GameObject player;
 
-    private GameObject[,] nodeMap;
+    public GameObject[,] nodeMap;
     private List<GameObject> pathObjects;
     private List<GameObject> openListObjects;
     private List<GameObject> seenListObjects;
@@ -80,7 +80,7 @@ public class GenerateNodes : MonoBehaviour {
 
     }
     // Use this for initialization
-    private void PlaceAIs()
+    private void PlacePlayerAndAIs()
     {
         GameObject newAI1 = (GameObject)Instantiate(AI, new Vector3(NodesX-1, 0f, -1f), transform.rotation);
         GameObject newAI2 = (GameObject)Instantiate(AI, new Vector3(NodesX-1, NodesY-1, -1f), transform.rotation);
@@ -90,11 +90,10 @@ public class GenerateNodes : MonoBehaviour {
 
         newAI1.renderer.material.color = Color.magenta;
         newAI2.renderer.material.color = Color.magenta;
-    }
 
-    private void PlacePlayer()
-    {
-
+        GameObject newPlayer = (GameObject)Instantiate(player, new Vector3(0f, 0f, -1f), transform.rotation);
+        newPlayer.transform.parent = transform;
+        newPlayer.GetComponent<PlayerBehaviour>().AssignAIs(newAI1, newAI2);
     }
     
     
@@ -102,8 +101,7 @@ public class GenerateNodes : MonoBehaviour {
     {
         CreateNodes();
         GenerateWalls();
-        PlaceAIs();
-        PlacePlayer();
+        PlacePlayerAndAIs();
         pathfinder = new Pathfinder(nodeMap);
 
 	}
