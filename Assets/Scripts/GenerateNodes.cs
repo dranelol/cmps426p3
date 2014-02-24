@@ -20,7 +20,7 @@ public class GenerateNodes : MonoBehaviour {
 
     private Dictionary<Vector3, GameObject> nodeDict;
 
-    private Pathfinder pathfinder;
+    public Pathfinder pathfinder;
 
     private void CreateNodes()
     {
@@ -91,6 +91,9 @@ public class GenerateNodes : MonoBehaviour {
         newAI1.renderer.material.color = Color.magenta;
         newAI2.renderer.material.color = Color.magenta;
 
+        newAI1.GetComponent<AIBehaviour>().AINum = 1;
+        newAI2.GetComponent<AIBehaviour>().AINum = 2;
+
         GameObject newPlayer = (GameObject)Instantiate(player, new Vector3(0f, 0f, -1f), transform.rotation);
         newPlayer.transform.parent = transform;
         newPlayer.GetComponent<PlayerBehaviour>().AssignAIs(newAI1, newAI2);
@@ -101,8 +104,9 @@ public class GenerateNodes : MonoBehaviour {
     {
         CreateNodes();
         GenerateWalls();
-        PlacePlayerAndAIs();
         pathfinder = new Pathfinder(nodeMap);
+        PlacePlayerAndAIs();
+        
 
 	}
 	
