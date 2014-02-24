@@ -19,7 +19,6 @@ public class CubeBehaviour : MonoBehaviour {
 
     void OnMouseOver()
     {
-        Debug.Log("asd");
         // left click, try to set start point
         if (Input.GetMouseButtonDown(0))
         {

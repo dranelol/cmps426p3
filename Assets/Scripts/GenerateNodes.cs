@@ -10,23 +10,31 @@ public class GenerateNodes : MonoBehaviour {
     private GameObject endPoint;
 
     public GameObject node;
+    public GameObject AI;
+    public GameObject player;
 
     private GameObject[,] nodeMap;
+    private List<GameObject> pathObjects;
+    private List<GameObject> openListObjects;
+    private List<GameObject> seenListObjects;
 
     private Dictionary<Vector3, GameObject> nodeDict;
 
-
+    private Pathfinder pathfinder;
 
     private void CreateNodes()
     {
         nodeMap = new GameObject[NodesX, NodesY];
         nodeDict = new Dictionary<Vector3, GameObject>();
+        pathObjects = new List<GameObject>();
+        openListObjects = new List<GameObject>();
+        seenListObjects = new List<GameObject>();
 
         for (int i = 0; i < NodesX; i++)
         {
             for (int j = 0; j < NodesX; j++)
             {
-                Vector3 newPosition = new Vector3(i / 3f, j / 3f, 0f);
+                Vector3 newPosition = new Vector3(i, j, 0f);
                 GameObject newNode = (GameObject)Instantiate(node, newPosition, transform.rotation);
                 newNode.renderer.material.color = Color.white;
                 newNode.transform.parent = transform;
@@ -36,26 +44,68 @@ public class GenerateNodes : MonoBehaviour {
             }
         }
 
-        float MaxX = NodesX / 3f;
-        float MaxY = NodesY / 3f;
-        // 50 = 10
-        // 100 = 18
-        float scalingFactor = (NodesX - 50f) / 6.25f;
+        float MaxX = NodesX;
+        float MaxY = NodesY;
+        // 18 = 10
+        // 100 = 53
+        float scalingFactor = (NodesX - 18f) / 1.907f;
 
-        Camera.main.transform.position = new Vector3(MaxX / 2f, MaxY / 2f, -1f);
+        Camera.main.transform.position = new Vector3(MaxX / 2f, MaxY / 2f, Camera.main.transform.position.z);
         Camera.main.orthographicSize += scalingFactor;
+        
     }
 
     private void GenerateWalls()
     {
         int TotalNodes = NodesX * NodesY;
+        for (int i = 0; i < NodesX; i++)
+        {
+            for (int j = 0; j < NodesY; j++)
+            {
+                if(Random.Range(0,100) % 4 == 0)
+                {
+                    if( (i == 0 && j == 0) || (i==NodesX-1 && j == 0) || (i==NodesX-1 && j==NodesY-1))
+                    {
+                        // do nothing
+                    }
+
+                    else
+                    {
+                        nodeMap[i, j].renderer.material.color = Color.black;
+                    }
+                }
+            }
+        }
+
 
     }
-	// Use this for initialization
-	void Start () 
+    // Use this for initialization
+    private void PlaceAIs()
+    {
+        GameObject newAI1 = (GameObject)Instantiate(AI, new Vector3(NodesX-1, 0f, -1f), transform.rotation);
+        GameObject newAI2 = (GameObject)Instantiate(AI, new Vector3(NodesX-1, NodesY-1, -1f), transform.rotation);
+
+        newAI1.transform.parent = transform;
+        newAI2.transform.parent = transform;
+
+        newAI1.renderer.material.color = Color.magenta;
+        newAI2.renderer.material.color = Color.magenta;
+    }
+
+    private void PlacePlayer()
+    {
+
+    }
+    
+    
+    void Start() 
     {
         CreateNodes();
         GenerateWalls();
+        PlaceAIs();
+        PlacePlayer();
+        pathfinder = new Pathfinder(nodeMap);
+
 	}
 	
 	// Update is called once per frame
@@ -63,7 +113,56 @@ public class GenerateNodes : MonoBehaviour {
     {
         if (Input.GetKeyDown(KeyCode.Return) == true)
         {
+            // if start and end are set
+            if (startPoint != null && endPoint != null)
+            {
+                // return path and openlist, if either are applicable
 
+                Debug.Log("starting: " + startPoint.transform.position);
+                Debug.Log("ending: " + endPoint.transform.position);
+                
+                List<List<Vector3>> path = pathfinder.FindOptimalPath(startPoint.transform.position, endPoint.transform.position);
+                
+                foreach (Vector3 node in path[2])
+                {
+                    Debug.Log(node.ToString());
+                    if (nodeDict[node] != startPoint && nodeDict[node] != endPoint)
+                    {
+                        nodeDict[node].renderer.material.color = Color.grey;
+                    }
+                    seenListObjects.Add(nodeDict[node]);
+                }
+
+                foreach (Vector3 node in path[1])
+                {
+                    if (nodeDict[node] != startPoint && nodeDict[node] != endPoint)
+                    {
+                        nodeDict[node].renderer.material.color = Color.blue;
+                    }
+                    openListObjects.Add(nodeDict[node]); 
+                }
+
+                foreach (Vector3 node in path[0])
+                {
+                    nodeDict[node].renderer.material.color = Color.yellow;
+                    pathObjects.Add(nodeDict[node]);
+                }
+                
+
+                
+
+                
+            }
+        }
+
+        if (Input.GetKeyDown(KeyCode.Backspace) == true)
+        {
+            ResetAllNodes();
+        }
+
+        if (Input.GetKeyDown(KeyCode.F5) == true)
+        {
+            Application.LoadLevel(0);
         }
 	    
 	}
@@ -78,7 +177,8 @@ public class GenerateNodes : MonoBehaviour {
         }
 
         startPoint = startNode;
-        startPoint.renderer.material.color = Color.blue;
+        startPoint.renderer.material.color = Color.green;
+        Debug.Log("setting start: " + startPoint.transform.position);
     }
 
     public void setEnd(GameObject endNode)
@@ -91,6 +191,50 @@ public class GenerateNodes : MonoBehaviour {
 
         endPoint = endNode;
         endPoint.renderer.material.color = Color.red;
+        Debug.Log("setting end: " + endPoint.transform.position);
 
+    }
+
+    public void ResetAllNodes()
+    {
+        if (startPoint != null)
+        {
+            startPoint.renderer.material.color = Color.white;
+        }
+
+        if (endPoint != null)
+        {
+            endPoint.renderer.material.color = Color.white;
+        }
+
+        if (pathObjects.Count > 0)
+        {
+            foreach (GameObject node in pathObjects)
+            {
+                node.renderer.material.color = Color.white;
+            }
+        }
+
+        if (openListObjects.Count > 0)
+        {
+            foreach (GameObject node in openListObjects)
+            {
+                node.renderer.material.color = Color.white;
+            }
+        }
+
+        if (seenListObjects.Count > 0)
+        {
+            foreach (GameObject node in seenListObjects)
+            {
+                node.renderer.material.color = Color.white;
+            }
+        }
+
+        startPoint = null;
+        endPoint = null;
+        pathObjects.Clear();
+        openListObjects.Clear();
+        seenListObjects.Clear();
     }
 }

@@ -78,20 +78,13 @@ public class Pathfinder
     // Height of the map
     private int mapHeight;
 
-    // size of one grid square
-    private int sizeofOneGrid = 32;
-
-    private Vector2 offset;
-
     /// <summary>
     /// Constructor
     /// </summary>
-    public Pathfinder(GameObject[,] map, Vector2 offset)
+    public Pathfinder(GameObject[,] map)
     {
         mapWidth = map.GetLength(0);
         mapHeight = map.GetLength(1);
-
-        this.offset = offset;
 
         System.Diagnostics.Debug.WriteLine(mapWidth.ToString() + ", " + mapHeight.ToString());
 
@@ -212,12 +205,17 @@ public class Pathfinder
     private List<SearchNode> closedList = new List<SearchNode>();
 
     /// <summary>
+    /// Holds the nodes that we have seen
+    /// </summary>
+    private List<SearchNode> seenList = new List<SearchNode>();
+
+    /// <summary>
     /// Heuristic for figuring out the distance between two points
     /// </summary>
     /// <param name="point1"></param>
     /// <param name="point2"></param>
     /// <returns></returns>
-    private float GetManhattanDistance(Vector2 point1, Vector2 point2)
+    private float GetManhattanDistance(Vector3 point1, Vector3 point2)
     {
         return Mathf.Abs(point1.x - point2.x) +
                Mathf.Abs(point1.y - point2.y);
@@ -230,6 +228,7 @@ public class Pathfinder
     {
         openList.Clear();
         closedList.Clear();
+        seenList.Clear();
 
         for (int x = 0; x < mapWidth; x++)
         {
@@ -260,7 +259,6 @@ public class Pathfinder
     private SearchNode FindBestNode()
     {
         SearchNode current = openList[0];
-
         float smallestDistanceToGoal = float.MaxValue;
 
         // iterate through list, finding the node with the smallest distance to the target node
@@ -301,11 +299,10 @@ public class Pathfinder
         // reverse the path, transform into points(grids)
 
 
-
+        // convert each searchnode to a vector3 in screen space
         for (int i = closedList.Count - 1; i >= 0; i--)
         {
-            //path.Add(new Vector2((closedList[i].Position.x * 32) + offset.x, (closedList[i].Position.y * 32) + offset.Y)); //<--------------------------------------------------Change 32 to global variables
-            
+            path.Add(new Vector3(closedList[i].Position.x, closedList[i].Position.y, 0f));
         }
 
         return path;
@@ -317,24 +314,22 @@ public class Pathfinder
     /// <param name="start"></param>
     /// <param name="end"></param>
     /// <returns></returns>
-    public List<Vector3> FindOptimalPath(Vector2 start, Vector2 end)
-    {
-
-            
+    public List<List<Vector3>> FindOptimalPath(Vector3 start, Vector3 end)
+    {  
         //Vector2 start = new Vector2((int)(source.sprite.X / 64), (int)(source.sprite.X / 64));
         //Vector2 end = new Vector2((int)(target.sprite.X / 64), (int)(target.sprite.X / 64));
             
         // if the first and last nodes are the same, the path is irrelevant
         if (start == end)
         {
-            return new List<Vector3>();
+            return new List<List<Vector3>>();
         }
 
         // Start by clearing the open and closed lists, resetting state of every node
         ResetNodes();
 
-        SearchNode startNode = searchNodes[(int)start.x, (int)start.y];
-        SearchNode endNode = searchNodes[(int)end.x, (int)end.y];
+        SearchNode startNode = searchNodes[(int)(start.x), (int)(start.y)];
+        SearchNode endNode = searchNodes[(int)(end.x), (int)(end.y)];
 
         // set the start node's weight (distance travelled) to 0
         // set the start node's distance to goal as the distance between start and end
@@ -344,6 +339,7 @@ public class Pathfinder
         startNode.DistanceTraveled = 0;
 
         openList.Add(startNode);
+        seenList.Add(startNode);
 
         // while there are nodes to search in the openlist, loop through
         // the open list and find the node that has the smallest distance to goal 
@@ -364,8 +360,31 @@ public class Pathfinder
 
             if(current == endNode)
             {
+
+                // return two lists: path, and open list
+                List<List<Vector3>> pathAndOpenList = new List<List<Vector3>>();
                 // find path back to the start
-                return FindPath(startNode,endNode);
+                List<Vector3> thePath = FindPath(startNode,endNode);
+                List<Vector3> newOpenList = new List<Vector3>();
+                List<Vector3> newSeenList = new List<Vector3>();
+                // convert each searchnode to a vector3 in screen space
+                foreach (SearchNode item in openList)
+                {
+                    newOpenList.Add(new Vector3(item.Position.x, item.Position.y, 0f));
+                }
+
+                //convert each searchnode to a vector3 in screen space
+                foreach (SearchNode item in seenList)
+                {
+                    newSeenList.Add(new Vector3(item.Position.x, item.Position.y, 0f));
+                }
+
+                pathAndOpenList.Add(thePath);
+                pathAndOpenList.Add(newOpenList);
+                pathAndOpenList.Add(newSeenList);
+                return pathAndOpenList;
+
+
             }
 
             // loop through each of current's neighbors
@@ -410,6 +429,9 @@ public class Pathfinder
 
                     neighbor.InOpenList = true;
                     openList.Add(neighbor);
+                    seenList.Add(neighbor);
+
+                    // TODO
                 }
 
                 // else if the neighbor is in either the open or closed lists
@@ -435,9 +457,32 @@ public class Pathfinder
             openList.Remove(current);
             current.InClosedList = true;
         }
+
         // no node was found, return empty list
 
-        return new List<Vector3>();
+        List<Vector3> noPath = new List<Vector3>();
+        List<Vector3> onlyOpenList = new List<Vector3>();
+        List<Vector3> onlySeenList = new List<Vector3>();
+
+        // convert each searchnode to a vector3 in screen space
+        foreach (SearchNode item in openList)
+        {
+            onlyOpenList.Add(new Vector3(item.Position.x, item.Position.y, 0f));
+        }
+
+        //convert each searchnode to a vector3 in screen space
+        foreach (SearchNode item in seenList)
+        {
+            onlyOpenList.Add(new Vector3(item.Position.x, item.Position.y, 0f));
+        }
+
+        List<List<Vector3>> returnList = new List<List<Vector3>>();
+
+        returnList.Add(noPath);
+        returnList.Add(noPath);
+        returnList.Add(noPath);
+
+        return returnList;
                 
     }
 
