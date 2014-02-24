@@ -18,7 +18,7 @@ public class GenerateNodes : MonoBehaviour {
     private List<GameObject> openListObjects;
     private List<GameObject> seenListObjects;
 
-    private Dictionary<Vector3, GameObject> nodeDict;
+    public Dictionary<Vector3, GameObject> nodeDict;
 
     public Pathfinder pathfinder;
 
@@ -93,6 +93,8 @@ public class GenerateNodes : MonoBehaviour {
 
         newAI1.GetComponent<AIBehaviour>().AINum = 1;
         newAI2.GetComponent<AIBehaviour>().AINum = 2;
+        newAI1.GetComponent<AIBehaviour>().otherAI = newAI2;
+        newAI2.GetComponent<AIBehaviour>().otherAI = newAI1;
 
         GameObject newPlayer = (GameObject)Instantiate(player, new Vector3(0f, 0f, -1f), transform.rotation);
         newPlayer.transform.parent = transform;

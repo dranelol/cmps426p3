@@ -12,10 +12,12 @@ public class AIBehaviour : MonoBehaviour {
     private List<Vector3> openList;
     private List<Vector3> closedList;
     private List<Vector3> seenList;
+    private Dictionary<Vector3, GameObject> objectDict;
 
     private Pathfinder pathfinder;
 
     public GameObject player;
+    public GameObject otherAI;
 
     public int AINum;
 
@@ -24,8 +26,12 @@ public class AIBehaviour : MonoBehaviour {
         colorHandler = transform.parent.GetComponent<MazeColorHandler>();
         repathTime = RepathTime;
         moveTimer = MoveTimer;
+        RepathTime = 0.0f;
 
-        pathfinder = transform.parent.GetComponent<GenerateNodes>().pathfinder;
+        pathfinder = new Pathfinder(transform.parent.GetComponent<GenerateNodes>().nodeMap);
+
+        objectDict = transform.parent.GetComponent<GenerateNodes>().nodeDict;
+        
 	}
 	
 	void Update () 
@@ -48,6 +54,30 @@ public class AIBehaviour : MonoBehaviour {
                 seenList = newPath[2];
 
                 RepathTime = repathTime;
+
+                Debug.Log("AI: " + AINum + " finding new path");
+                Debug.Log(closedList.ToString());
+
+                List<GameObject> closedObjects = new List<GameObject>();
+                List<GameObject> openObjects = new List<GameObject>();
+                List<GameObject> seenObjects = new List<GameObject>();
+
+                foreach (Vector3 item in closedList)
+                {
+                    closedObjects.Add(objectDict[item]);
+                }
+
+                foreach (Vector3 item in openList)
+                {
+                    openObjects.Add(objectDict[item]);
+                }
+
+                foreach (Vector3 item in seenList)
+                {
+                    seenObjects.Add(objectDict[item]);
+                }
+
+                colorHandler.NewPath(AINum, closedObjects, openObjects, seenObjects);
             }
 
             else
@@ -56,15 +86,19 @@ public class AIBehaviour : MonoBehaviour {
             }
 
             // move if possible
-            Vector3 newPosition = new Vector3(closedList[0].x, closedList[0].y, transform.position.z);
-
-            if (newPosition.x != player.transform.position.x && newPosition.y != player.transform.position.y)
+            if (closedList.Count > 0)
             {
-                closedList.RemoveAt(0);
-                transform.position = newPosition;
+                Vector3 newPosition = new Vector3(closedList[0].x, closedList[0].y, transform.position.z);
+                Vector3 playerPositionNormalized = new Vector3(player.transform.position.x, player.transform.position.y, transform.position.z);
+                if (newPosition != playerPositionNormalized && newPosition != otherAI.transform.position)
+                {
+                    closedList.RemoveAt(0);
+                    transform.position = newPosition;
+                    MoveTimer = moveTimer;
+                }
             }
 
-            MoveTimer = moveTimer;
+            
         }
 
         else

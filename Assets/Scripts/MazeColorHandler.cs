@@ -32,6 +32,7 @@ public class MazeColorHandler : MonoBehaviour {
         masterSeenList.Clear();
         masterOpenList.Clear();
         masterClosedList.Clear();
+
         if (AI == 1)
         {
             // reset all from 1
@@ -90,6 +91,9 @@ public class MazeColorHandler : MonoBehaviour {
             masterSeenList.AddRange(seenList);
 
         }
+        Debug.Log(masterClosedList.Count);
+        Debug.Log(masterOpenList.Count);
+        Debug.Log(masterSeenList.Count);
 
         // draw
         foreach (GameObject node in masterSeenList)
