@@ -168,7 +168,10 @@ public class MazeColorHandler : MonoBehaviour {
         // draw
         foreach (GameObject node in masterSeenList)
         {
-            node.renderer.material.color = Color.grey;
+            if (node != null)
+            {
+                node.renderer.material.color = Color.grey;
+            }
             
         }
 
