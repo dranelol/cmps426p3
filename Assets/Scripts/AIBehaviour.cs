@@ -67,8 +67,8 @@ public class AIBehaviour : MonoBehaviour {
 
                 RepathTime = repathTime;
 
-                Debug.Log("AI: " + AINum + " finding new path");
-                Debug.Log(closedList.ToString());
+                //Debug.Log("AI: " + AINum + " finding new path");
+                //Debug.Log(closedList.ToString());
 
                 List<GameObject> closedObjects = new List<GameObject>();
                 List<GameObject> openObjects = new List<GameObject>();
@@ -91,9 +91,9 @@ public class AIBehaviour : MonoBehaviour {
 
                 pathCounter = 0;
 
-                Debug.Log("closed: " + closedObjects.Count.ToString());
-                Debug.Log("open: " + openObjects.Count.ToString());
-                Debug.Log("seen: " + seenObjects.Count.ToString());
+                //Debug.Log("closed: " + closedObjects.Count.ToString());
+                //Debug.Log("open: " + openObjects.Count.ToString());
+                //Debug.Log("seen: " + seenObjects.Count.ToString());
 
                 colorHandler.NewPath(AINum, closedObjects, openObjects, seenObjects);
             }

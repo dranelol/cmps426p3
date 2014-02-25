@@ -37,21 +37,14 @@ public class MazeColorHandler : MonoBehaviour {
 
         if (AI == 1)
         {
-            int a=0;
-            // reset all from 1
-
-            
             if (closedList1.Count > 0)
             {
                 foreach (GameObject node in closedList1)
                 {
-                    //Debug.Log("got to point: " + a.ToString());
                     if (node != null)
                     {
                         node.renderer.material.color = Color.white;
                     }
-                    //Debug.Log(node.ToString());
-                    a++;
                 }
                 
             }
@@ -65,7 +58,6 @@ public class MazeColorHandler : MonoBehaviour {
                     {
                         node.renderer.material.color = Color.white;
                     }
-                    //Debug.Log(node.ToString());
                 }
             }
 
@@ -77,7 +69,6 @@ public class MazeColorHandler : MonoBehaviour {
                     {
                         node.renderer.material.color = Color.white;
                     }
-                    //Debug.Log(node.ToString());
                 }
             }
 
@@ -114,13 +105,10 @@ public class MazeColorHandler : MonoBehaviour {
                 
                 foreach (GameObject node in closedList2)
                 {
-                    Debug.Log("got to point: " + b.ToString());
                     if (node != null)
                     {
                         node.renderer.material.color = Color.white;
                     }
-                    //Debug.Log(node.ToString());
-                    b++;
                 }
                 
             }
@@ -173,9 +161,9 @@ public class MazeColorHandler : MonoBehaviour {
 
         }
 
-        Debug.Log(masterClosedList.Count);
-        Debug.Log(masterOpenList.Count);
-        Debug.Log(masterSeenList.Count);
+        //Debug.Log(masterClosedList.Count);
+        //Debug.Log(masterOpenList.Count);
+        //Debug.Log(masterSeenList.Count);
 
         // draw
         foreach (GameObject node in masterSeenList)
