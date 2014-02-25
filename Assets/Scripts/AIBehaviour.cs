@@ -18,12 +18,15 @@ public class AIBehaviour : MonoBehaviour {
 
     public GameObject player;
     public GameObject otherAI;
+    public GameObject stateSpace;
+
+    int pathCounter = 0;
 
     public int AINum;
 
 	void Start () 
     {
-        colorHandler = transform.parent.GetComponent<MazeColorHandler>();
+        colorHandler = stateSpace.GetComponent<MazeColorHandler>();
         repathTime = RepathTime;
         moveTimer = MoveTimer;
         RepathTime = 0.0f;
@@ -31,6 +34,10 @@ public class AIBehaviour : MonoBehaviour {
         pathfinder = new Pathfinder(transform.parent.GetComponent<GenerateNodes>().nodeMap);
 
         objectDict = transform.parent.GetComponent<GenerateNodes>().nodeDict;
+
+        closedList = new List<Vector3>();
+        openList = new List<Vector3>();
+        seenList = new List<Vector3>();
         
 	}
 	
@@ -41,13 +48,18 @@ public class AIBehaviour : MonoBehaviour {
             if (RepathTime <= 0.0f)
             {
                 // choose new path
-
+                
                 if (player == null)
                 {
                     player = GameObject.FindGameObjectWithTag("Player");
                 }
 
                 List<List<Vector3>> newPath = pathfinder.FindOptimalPath(transform.position, player.transform.position);
+
+
+                closedList = new List<Vector3>();
+                openList = new List<Vector3>();
+                seenList = new List<Vector3>();
 
                 closedList = newPath[0];
                 openList = newPath[1];
@@ -62,20 +74,26 @@ public class AIBehaviour : MonoBehaviour {
                 List<GameObject> openObjects = new List<GameObject>();
                 List<GameObject> seenObjects = new List<GameObject>();
 
-                foreach (Vector3 item in closedList)
+                foreach (Vector3 item1 in closedList)
                 {
-                    closedObjects.Add(objectDict[item]);
+                    closedObjects.Add(objectDict[item1]);
                 }
 
-                foreach (Vector3 item in openList)
+                foreach (Vector3 item2 in openList)
                 {
-                    openObjects.Add(objectDict[item]);
+                    openObjects.Add(objectDict[item2]);
                 }
 
-                foreach (Vector3 item in seenList)
+                foreach (Vector3 item3 in seenList)
                 {
-                    seenObjects.Add(objectDict[item]);
+                    seenObjects.Add(objectDict[item3]);
                 }
+
+                pathCounter = 0;
+
+                Debug.Log("closed: " + closedObjects.Count.ToString());
+                Debug.Log("open: " + openObjects.Count.ToString());
+                Debug.Log("seen: " + seenObjects.Count.ToString());
 
                 colorHandler.NewPath(AINum, closedObjects, openObjects, seenObjects);
             }
@@ -88,6 +106,7 @@ public class AIBehaviour : MonoBehaviour {
             // move if possible
             if (closedList.Count > 0)
             {
+
                 Vector3 newPosition = new Vector3(closedList[0].x, closedList[0].y, transform.position.z);
                 Vector3 playerPositionNormalized = new Vector3(player.transform.position.x, player.transform.position.y, transform.position.z);
                 if (newPosition != playerPositionNormalized && newPosition != otherAI.transform.position)
@@ -95,6 +114,7 @@ public class AIBehaviour : MonoBehaviour {
                     closedList.RemoveAt(0);
                     transform.position = newPosition;
                     MoveTimer = moveTimer;
+                    pathCounter++;
                 }
             }
 

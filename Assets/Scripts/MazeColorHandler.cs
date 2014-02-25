@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 public class MazeColorHandler : MonoBehaviour {
     public List<GameObject> openList1;
@@ -29,27 +30,67 @@ public class MazeColorHandler : MonoBehaviour {
 
     public void NewPath(int AI, List<GameObject> closedList, List<GameObject> openList, List<GameObject> seenList)
     {
-        masterSeenList.Clear();
-        masterOpenList.Clear();
-        masterClosedList.Clear();
+
+        masterSeenList = new List<GameObject>();
+        masterOpenList = new List<GameObject>();
+        masterClosedList = new List<GameObject>();
 
         if (AI == 1)
         {
+            int a=0;
             // reset all from 1
-            foreach (GameObject node in closedList1)
+
+            
+            if (closedList1.Count > 0)
             {
-                node.renderer.material.color = Color.white;
+                foreach (GameObject node in closedList1)
+                {
+                    //Debug.Log("got to point: " + a.ToString());
+                    if (node != null)
+                    {
+                        node.renderer.material.color = Color.white;
+                    }
+                    //Debug.Log(node.ToString());
+                    a++;
+                }
+                
+            }
+             
+
+            if (openList1.Count > 0)
+            {
+                foreach (GameObject node in openList1)
+                {
+                    if (node != null)
+                    {
+                        node.renderer.material.color = Color.white;
+                    }
+                    //Debug.Log(node.ToString());
+                }
             }
 
-            foreach (GameObject node in openList1)
+            if (seenList1.Count > 0)
             {
-                node.renderer.material.color = Color.white;
+                foreach (GameObject node in seenList1)
+                {
+                    if (node != null)
+                    {
+                        node.renderer.material.color = Color.white;
+                    }
+                    //Debug.Log(node.ToString());
+                }
             }
 
-            foreach (GameObject node in seenList1)
-            {
-                node.renderer.material.color = Color.white;
-            }
+            
+
+            closedList1 = new List<GameObject>();
+            openList1 = new List<GameObject>();
+            seenList1 = new List<GameObject>();
+
+            closedList1.AddRange(closedList);
+            openList1.AddRange(openList);
+            seenList1.AddRange(seenList);
+            
             // take current lists from 2, combine them with new 1
 
             masterClosedList.AddRange(closedList2);
@@ -64,21 +105,61 @@ public class MazeColorHandler : MonoBehaviour {
 
         else
         {
+            int b = 0;
             // reset all from 2
-            foreach (GameObject node in closedList2)
+
+            
+            if (closedList2.Count > 0)
             {
-                node.renderer.material.color = Color.white;
+                
+                foreach (GameObject node in closedList2)
+                {
+                    Debug.Log("got to point: " + b.ToString());
+                    if (node != null)
+                    {
+                        node.renderer.material.color = Color.white;
+                    }
+                    //Debug.Log(node.ToString());
+                    b++;
+                }
+                
+            }
+           
+
+            if (openList2.Count > 0)
+            {
+                foreach (GameObject node in openList2)
+                {
+                    if (node != null)
+                    {
+                        node.renderer.material.color = Color.white;
+                    }
+                    //Debug.Log(node.ToString());
+                }
             }
 
-            foreach (GameObject node in openList2)
+            if (seenList2.Count > 0)
             {
-                node.renderer.material.color = Color.white;
+                foreach (GameObject node in seenList2)
+                {
+                    if (node != null)
+                    {
+                        node.renderer.material.color = Color.white;
+                    }
+                    //Debug.Log(node.ToString());
+                }
             }
 
-            foreach (GameObject node in seenList2)
-            {
-                node.renderer.material.color = Color.white;
-            }
+            closedList2 = new List<GameObject>();
+            openList2 = new List<GameObject>();
+            seenList2 = new List<GameObject>();
+
+            //closedList2.Concat<GameObject>(closedList);
+            
+            closedList2.AddRange(closedList);
+            openList2.AddRange(openList);
+            seenList2.AddRange(seenList);
+
             // take current lists from 1, combine them with new 2
 
             masterClosedList.AddRange(closedList1);
@@ -91,6 +172,7 @@ public class MazeColorHandler : MonoBehaviour {
             masterSeenList.AddRange(seenList);
 
         }
+
         Debug.Log(masterClosedList.Count);
         Debug.Log(masterOpenList.Count);
         Debug.Log(masterSeenList.Count);
@@ -99,16 +181,19 @@ public class MazeColorHandler : MonoBehaviour {
         foreach (GameObject node in masterSeenList)
         {
             node.renderer.material.color = Color.grey;
+            
         }
 
         foreach (GameObject node in masterOpenList)
         {
             node.renderer.material.color = Color.blue;
+            
         }
 
         foreach (GameObject node in masterClosedList)
         {
             node.renderer.material.color = Color.yellow;
+            
         }
     }
 }

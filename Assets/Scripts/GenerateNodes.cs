@@ -88,8 +88,8 @@ public class GenerateNodes : MonoBehaviour {
         newAI1.transform.parent = transform;
         newAI2.transform.parent = transform;
 
-        newAI1.renderer.material.color = Color.magenta;
-        newAI2.renderer.material.color = Color.magenta;
+        newAI1.renderer.material.color = Color.red;
+        newAI2.renderer.material.color = Color.red;
 
         newAI1.GetComponent<AIBehaviour>().AINum = 1;
         newAI2.GetComponent<AIBehaviour>().AINum = 2;
