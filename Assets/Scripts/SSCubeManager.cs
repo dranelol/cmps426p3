@@ -58,12 +58,6 @@ public class SSCubeManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        foreach (GameObject item in cubes)
-        {
-
-            item.renderer.material.color = Color.white;
-        }
-
         collisionsX = new List<GameObject>();
         collisionsY = new List<GameObject>();
         collisionsZ = new List<GameObject>();
@@ -106,11 +100,8 @@ public class SSCubeManager : MonoBehaviour
         zlist.Sort(delegate(floatToGameObject a, floatToGameObject b) { return (a.f.CompareTo(b.f)); });
 
 
-
         foreach (floatToGameObject i in xlist)
         {
-
-            //Debug.Log(i.f.ToString());
 
             // i is a starting point, and active collisions doesn't already contain the gameobject we're looking at
             if (i.isStart == true && activeCollisionsX.Contains(i.item) == false)
@@ -118,14 +109,17 @@ public class SSCubeManager : MonoBehaviour
                 activeCollisionsX.Add(i.item);
 
                 // if we've got more than 2 things colliding on x axis
+                //Debug.Log(activeCollisionsX.Count);
                 if (activeCollisionsX.Count >= 2)
                 {
                     // add everything in active collisions if it already isnt there
+                    
                     foreach (GameObject item in activeCollisionsX)
                     {
-                        if (collisionsX.Contains(i.item) == false)
+                        
+                        if (collisionsX.Contains(item) == false)
                         {
-                            collisionsX.Add(i.item);
+                            collisionsX.Add(item);
                         }
                     }
                 }
@@ -138,51 +132,61 @@ public class SSCubeManager : MonoBehaviour
              
         }
 
+        Debug.Log("active x: " + activeCollisionsX.Count);
+        
         foreach (floatToGameObject i in ylist)
         {
 
-            //Debug.Log(i.f.ToString());
-
             // i is a starting point, and active collisions doesn't already contain the gameobject we're looking at
-            if (i.isStart == true && activeCollisionsX.Contains(i.item) == false)
+            if (i.isStart == true && activeCollisionsY.Contains(i.item) == false)
             {
-                activeCollisionsX.Add(i.item);
+                activeCollisionsY.Add(i.item);
 
                 // if we've got more than 2 things colliding on x axis
-                if (activeCollisionsX.Count >= 2)
+                //Debug.Log(activeCollisionsX.Count);
+                if (activeCollisionsY.Count >= 2)
                 {
                     // add everything in active collisions if it already isnt there
-                    foreach (GameObject item in activeCollisionsX)
+                    
+                    foreach (GameObject item in activeCollisionsY)
                     {
-                        if (collisionsX.Contains(i.item) == false)
+                        
+                        if (collisionsX.Contains(item) == true && collisionsY.Contains(item) == false)
                         {
-                            collisionsX.Add(i.item);
+                            collisionsY.Add(item);
                         }
                     }
                 }
             }
 
-            if (i.isStart == false && activeCollisionsX.Contains(i.item) == true)
+            if (i.isStart == false && activeCollisionsY.Contains(i.item) == true)
             {
-                activeCollisionsX.Remove(i.item);
+                activeCollisionsY.Remove(i.item);
             }
+             
         }
+
 
         foreach (floatToGameObject i in zlist)
         {
-            //Debug.Log(i.f.ToString());
-            
-            /*
-            // i is a start
-            if (zStart.ContainsKey(i) && !activeCollisionsZ.Contains(zStart[i]))
-            {
-                activeCollisionsZ.Add(zStart[i]);
 
+            // i is a starting point, and active collisions doesn't already contain the gameobject we're looking at
+            if (i.isStart == true && activeCollisionsZ.Contains(i.item) == false)
+            {
+                activeCollisionsZ.Add(i.item);
+
+                // if we've got more than 2 things colliding on x axis
+                //Debug.Log(activeCollisionsX.Count);
                 if (activeCollisionsZ.Count >= 2)
                 {
-                    foreach (GameObject item in activeCollisionsZ )
+                    // add everything in active collisions if it already isnt there
+
+                    foreach (GameObject item in activeCollisionsZ)
                     {
-                        if (!collisionsZ.Contains(item) && collisionsX.Contains(item) && collisionsY.Contains(item))
+
+                        if (collisionsX.Contains(item) == true 
+                            && collisionsY.Contains(item) == true 
+                            && collisionsZ.Contains(item) == false)
                         {
                             collisionsZ.Add(item);
                         }
@@ -190,20 +194,21 @@ public class SSCubeManager : MonoBehaviour
                 }
             }
 
-            if (zEnd.ContainsKey(i) && activeCollisionsZ.Contains(zEnd[i]))
+            if (i.isStart == false && activeCollisionsZ.Contains(i.item) == true)
             {
-                activeCollisionsZ.Remove(zEnd[i]);
+                activeCollisionsZ.Remove(i.item);
             }
-             * */
+
         }
+        
+        Debug.Log("x: " + collisionsX.Count.ToString());
+        Debug.Log("y: " + collisionsY.Count.ToString());
+        Debug.Log("z: " + collisionsZ.Count.ToString());
 
-        //handleColliding();
-
-        //Debug.Log(collisions.Count.ToString());
         
         foreach (GameObject item in cubes)
         {
-            if (collisionsX.Contains(item))
+            if (collisionsX.Contains(item) == true)
             {
                 item.renderer.material.color = Color.black;
             }
