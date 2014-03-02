@@ -136,32 +136,34 @@ public class SSCubeManager : MonoBehaviour
         
         foreach (floatToGameObject i in ylist)
         {
-
-            // i is a starting point, and active collisions doesn't already contain the gameobject we're looking at
-            if (i.isStart == true && activeCollisionsY.Contains(i.item) == false)
+            if (collisionsX.Contains(i.item) == true)
             {
-                activeCollisionsY.Add(i.item);
-
-                // if we've got more than 2 things colliding on x axis
-                //Debug.Log(activeCollisionsX.Count);
-                if (activeCollisionsY.Count >= 2)
+                // i is a starting point, and active collisions doesn't already contain the gameobject we're looking at
+                if (i.isStart == true && activeCollisionsY.Contains(i.item) == false)
                 {
-                    // add everything in active collisions if it already isnt there
-                    
-                    foreach (GameObject item in activeCollisionsY)
+                    activeCollisionsY.Add(i.item);
+
+                    // if we've got more than 2 things colliding on x axis
+                    //Debug.Log(activeCollisionsX.Count);
+                    if (activeCollisionsY.Count >= 2)
                     {
-                        
-                        if (collisionsX.Contains(item) == true && collisionsY.Contains(item) == false)
+                        // add everything in active collisions if it already isnt there
+
+                        foreach (GameObject item in activeCollisionsY)
                         {
-                            collisionsY.Add(item);
+
+                            if (collisionsX.Contains(item) == true && collisionsY.Contains(item) == false)
+                            {
+                                collisionsY.Add(item);
+                            }
                         }
                     }
                 }
-            }
 
-            if (i.isStart == false && activeCollisionsY.Contains(i.item) == true)
-            {
-                activeCollisionsY.Remove(i.item);
+                if (i.isStart == false && activeCollisionsY.Contains(i.item) == true)
+                {
+                    activeCollisionsY.Remove(i.item);
+                }
             }
              
         }
@@ -169,34 +171,36 @@ public class SSCubeManager : MonoBehaviour
 
         foreach (floatToGameObject i in zlist)
         {
-
-            // i is a starting point, and active collisions doesn't already contain the gameobject we're looking at
-            if (i.isStart == true && activeCollisionsZ.Contains(i.item) == false)
+            if (collisionsX.Contains(i.item) == true && collisionsY.Contains(i.item) == true)
             {
-                activeCollisionsZ.Add(i.item);
-
-                // if we've got more than 2 things colliding on x axis
-                //Debug.Log(activeCollisionsX.Count);
-                if (activeCollisionsZ.Count >= 2)
+                // i is a starting point, and active collisions doesn't already contain the gameobject we're looking at
+                if (i.isStart == true && activeCollisionsZ.Contains(i.item) == false)
                 {
-                    // add everything in active collisions if it already isnt there
+                    activeCollisionsZ.Add(i.item);
 
-                    foreach (GameObject item in activeCollisionsZ)
+                    // if we've got more than 2 things colliding on x axis
+                    //Debug.Log(activeCollisionsX.Count);
+                    if (activeCollisionsZ.Count >= 2)
                     {
+                        // add everything in active collisions if it already isnt there
 
-                        if (collisionsX.Contains(item) == true 
-                            && collisionsY.Contains(item) == true 
-                            && collisionsZ.Contains(item) == false)
+                        foreach (GameObject item in activeCollisionsZ)
                         {
-                            collisionsZ.Add(item);
+
+                            if (collisionsX.Contains(item) == true
+                                && collisionsY.Contains(item) == true
+                                && collisionsZ.Contains(item) == false)
+                            {
+                                collisionsZ.Add(item);
+                            }
                         }
                     }
                 }
-            }
 
-            if (i.isStart == false && activeCollisionsZ.Contains(i.item) == true)
-            {
-                activeCollisionsZ.Remove(i.item);
+                if (i.isStart == false && activeCollisionsZ.Contains(i.item) == true)
+                {
+                    activeCollisionsZ.Remove(i.item);
+                }
             }
 
         }
@@ -208,7 +212,7 @@ public class SSCubeManager : MonoBehaviour
         
         foreach (GameObject item in cubes)
         {
-            if (collisionsX.Contains(item) == true)
+            if (collisionsZ.Contains(item) == true)
             {
                 item.renderer.material.color = Color.black;
             }
