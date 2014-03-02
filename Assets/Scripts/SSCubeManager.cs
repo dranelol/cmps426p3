@@ -4,19 +4,24 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-public struct floatToGameObject
+public struct GameObjectWrapper
 {
     public float f;
     public bool isStart;
     public GameObject item;
+    public List<GameObject> collidingWith;
 
-    public floatToGameObject(float fl, bool start, GameObject newItem)
+    public GameObjectWrapper(float fl, bool start, GameObject newItem)
     {
         this.f = fl;
         this.isStart = start;
         this.item = newItem;
+        this.collidingWith = new List<GameObject>();
     }
+
+    
 };
+
 
 public class SSCubeManager : MonoBehaviour
 {
@@ -31,10 +36,11 @@ public class SSCubeManager : MonoBehaviour
     private List<GameObject> activeCollisionsY;
     private List<GameObject> activeCollisionsZ;
 
-    private List<floatToGameObject> xlist;
-    private List<floatToGameObject> ylist;
-    private List<floatToGameObject> zlist;
+    private List<GameObjectWrapper> xlist;
+    private List<GameObjectWrapper> ylist;
+    private List<GameObjectWrapper> zlist;
 
+    private Dictionary<GameObject, GameObjectWrapper> objectDictionary;
     
 
     // Use this for initialization
@@ -48,9 +54,9 @@ public class SSCubeManager : MonoBehaviour
         activeCollisionsY = new List<GameObject>();
         activeCollisionsZ = new List<GameObject>();
 
-        xlist = new List<floatToGameObject>();
-        ylist = new List<floatToGameObject>();
-        zlist = new List<floatToGameObject>();
+        xlist = new List<GameObjectWrapper>();
+        ylist = new List<GameObjectWrapper>();
+        zlist = new List<GameObjectWrapper>();
 
         
     }
@@ -66,41 +72,43 @@ public class SSCubeManager : MonoBehaviour
         activeCollisionsY = new List<GameObject>();
         activeCollisionsZ = new List<GameObject>();
 
-        xlist = new List<floatToGameObject>();
-        ylist = new List<floatToGameObject>();
-        zlist = new List<floatToGameObject>();
+        xlist = new List<GameObjectWrapper>();
+        ylist = new List<GameObjectWrapper>();
+        zlist = new List<GameObjectWrapper>();
 
-        
+        objectDictionary = new Dictionary<GameObject, GameObjectWrapper>();
 
         foreach (GameObject item in cubes)
         {
 
-            floatToGameObject tempXMin = new floatToGameObject(item.renderer.bounds.min.x, true, item);
-            floatToGameObject tempXMax = new floatToGameObject(item.renderer.bounds.max.x, false, item);
+            GameObjectWrapper tempXMin = new GameObjectWrapper(item.renderer.bounds.min.x, true, item);
+            GameObjectWrapper tempXMax = new GameObjectWrapper(item.renderer.bounds.max.x, false, item);
             
             
             xlist.Add(tempXMin);
             xlist.Add(tempXMax);
 
-            floatToGameObject tempYMin = new floatToGameObject(item.renderer.bounds.min.y, true, item);
-            floatToGameObject tempYMax = new floatToGameObject(item.renderer.bounds.max.y, false, item);
+            GameObjectWrapper tempYMin = new GameObjectWrapper(item.renderer.bounds.min.y, true, item);
+            GameObjectWrapper tempYMax = new GameObjectWrapper(item.renderer.bounds.max.y, false, item);
 
             ylist.Add(tempYMin);
             ylist.Add(tempYMax);
 
-            floatToGameObject tempZMin = new floatToGameObject(item.renderer.bounds.min.z, true, item);
-            floatToGameObject tempZMax = new floatToGameObject(item.renderer.bounds.max.z, false, item);
+            GameObjectWrapper tempZMin = new GameObjectWrapper(item.renderer.bounds.min.z, true, item);
+            GameObjectWrapper tempZMax = new GameObjectWrapper(item.renderer.bounds.max.z, false, item);
 
             zlist.Add(tempZMin);
             zlist.Add(tempZMax);
+
+            objectDictionary[item] = new GameObjectWrapper(0, false, item);
         }
 
-        xlist.Sort(delegate(floatToGameObject a, floatToGameObject b) { return (a.f.CompareTo(b.f)); });
-        ylist.Sort(delegate(floatToGameObject a, floatToGameObject b) { return (a.f.CompareTo(b.f)); });
-        zlist.Sort(delegate(floatToGameObject a, floatToGameObject b) { return (a.f.CompareTo(b.f)); });
+        xlist.Sort(delegate(GameObjectWrapper a, GameObjectWrapper b) { return (a.f.CompareTo(b.f)); });
+        ylist.Sort(delegate(GameObjectWrapper a, GameObjectWrapper b) { return (a.f.CompareTo(b.f)); });
+        zlist.Sort(delegate(GameObjectWrapper a, GameObjectWrapper b) { return (a.f.CompareTo(b.f)); });
 
 
-        foreach (floatToGameObject i in xlist)
+        foreach (GameObjectWrapper i in xlist)
         {
 
             // i is a starting point, and active collisions doesn't already contain the gameobject we're looking at
@@ -121,6 +129,12 @@ public class SSCubeManager : MonoBehaviour
                         {
                             collisionsX.Add(item);
                         }
+                        
+
+                        if (i.collidingWith.Contains(item) == false)
+                        {
+                            i.collidingWith.Add(item);
+                        }
                     }
                 }
             }
@@ -134,7 +148,7 @@ public class SSCubeManager : MonoBehaviour
 
         Debug.Log("active x: " + activeCollisionsX.Count);
         
-        foreach (floatToGameObject i in ylist)
+        foreach (GameObjectWrapper i in ylist)
         {
             if (collisionsX.Contains(i.item) == true)
             {
@@ -157,6 +171,10 @@ public class SSCubeManager : MonoBehaviour
                                 collisionsY.Add(item);
                             }
                         }
+                        if (i.collidingWith.Contains(item) == false)
+                        {
+                            i.collidingWith.Add(item);
+                        }
                     }
                 }
 
@@ -169,7 +187,7 @@ public class SSCubeManager : MonoBehaviour
         }
 
 
-        foreach (floatToGameObject i in zlist)
+        foreach (GameObjectWrapper i in zlist)
         {
             if (collisionsX.Contains(i.item) == true && collisionsY.Contains(i.item) == true)
             {
@@ -194,6 +212,11 @@ public class SSCubeManager : MonoBehaviour
                                 collisionsZ.Add(item);
                             }
                         }
+
+                        if (i.collidingWith.Contains(item) == false)
+                        {
+                            i.collidingWith.Add(item);
+                        }
                     }
                 }
 
@@ -209,16 +232,13 @@ public class SSCubeManager : MonoBehaviour
         Debug.Log("y: " + collisionsY.Count.ToString());
         Debug.Log("z: " + collisionsZ.Count.ToString());
 
-        
-        foreach (GameObject item in cubes)
+        // search through every possible collision
+        foreach (GameObject item in collisionsX)
         {
-            if (collisionsZ.Contains(item) == true)
+            // for each x collision, search through the objects it collided with
+            foreach (GameObject collisionY in objectDictionary[item].collidingWith)
             {
-                item.renderer.material.color = Color.black;
-            }
-            else
-            {
-                item.renderer.material.color = Color.white;
+                
             }
         }
         
@@ -235,10 +255,9 @@ public class SSCubeManager : MonoBehaviour
       
 
         
-        foreach (GameObject item in collisionsZ)
+        foreach (GameObjectWrapper item in xlist)
         {
-
-            item.renderer.material.color = Color.black;
+            
         } 
         
 
@@ -246,7 +265,7 @@ public class SSCubeManager : MonoBehaviour
 
     }
 
-    int CompareGameObjects(floatToGameObject a, floatToGameObject b)
+    int CompareGameObjects(GameObjectWrapper a, GameObjectWrapper b)
     {
         return (a.f.CompareTo(b.f));
     }
