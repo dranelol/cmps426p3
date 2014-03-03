@@ -23,6 +23,8 @@ public struct GameObjectWrapper
 };
 
 
+
+
 public class SSCubeManager : MonoBehaviour
 {
 
@@ -41,6 +43,10 @@ public class SSCubeManager : MonoBehaviour
     private List<GameObjectWrapper> zlist;
 
     private Dictionary<GameObject, GameObjectWrapper> objectDictionary;
+
+    private Dictionary<GameObject, List<GameObject>> currentCollisionsX;
+    private Dictionary<GameObject, List<GameObject>> currentCollisionsY;
+    private Dictionary<GameObject, List<GameObject>> currentCollisionsZ;
     
 
     // Use this for initialization
@@ -58,7 +64,11 @@ public class SSCubeManager : MonoBehaviour
         ylist = new List<GameObjectWrapper>();
         zlist = new List<GameObjectWrapper>();
 
-        
+        currentCollisionsX = new Dictionary<GameObject, List<GameObject>>();
+        currentCollisionsY = new Dictionary<GameObject, List<GameObject>>();
+        currentCollisionsZ = new Dictionary<GameObject, List<GameObject>>();
+
+        objectDictionary = new Dictionary<GameObject, GameObjectWrapper>();
     }
 
     // Update is called once per frame
@@ -75,6 +85,10 @@ public class SSCubeManager : MonoBehaviour
         xlist = new List<GameObjectWrapper>();
         ylist = new List<GameObjectWrapper>();
         zlist = new List<GameObjectWrapper>();
+
+        currentCollisionsX = new Dictionary<GameObject, List<GameObject>>();
+        currentCollisionsY = new Dictionary<GameObject, List<GameObject>>();
+        currentCollisionsZ = new Dictionary<GameObject, List<GameObject>>();
 
         objectDictionary = new Dictionary<GameObject, GameObjectWrapper>();
 
@@ -101,6 +115,8 @@ public class SSCubeManager : MonoBehaviour
             zlist.Add(tempZMax);
 
             objectDictionary[item] = new GameObjectWrapper(0, false, item);
+
+            
         }
 
         xlist.Sort(delegate(GameObjectWrapper a, GameObjectWrapper b) { return (a.f.CompareTo(b.f)); });
@@ -112,7 +128,7 @@ public class SSCubeManager : MonoBehaviour
         {
 
             // i is a starting point, and active collisions doesn't already contain the gameobject we're looking at
-            if (i.isStart == true && activeCollisionsX.Contains(i.item) == false)
+            if (activeCollisionsX.Contains(i.item) == false)
             {
                 activeCollisionsX.Add(i.item);
 
@@ -124,35 +140,33 @@ public class SSCubeManager : MonoBehaviour
                     
                     foreach (GameObject item in activeCollisionsX)
                     {
-                        
-                        if (collisionsX.Contains(item) == false)
+                        if (currentCollisionsX.ContainsKey(i.item) == false)
                         {
-                            collisionsX.Add(item);
+                            currentCollisionsX[i.item] = new List<GameObject>();
+                            currentCollisionsX[i.item].Add(item);
                         }
-                        
 
-                        if (i.collidingWith.Contains(item) == false)
+                        if (currentCollisionsX[i.item].Contains(item) == false)
                         {
-                            i.collidingWith.Add(item);
+                            currentCollisionsX[i.item].Add(item);
                         }
+                        
                     }
                 }
             }
 
-            if (i.isStart == false && activeCollisionsX.Contains(i.item) == true)
+            else if (activeCollisionsX.Contains(i.item) == true)
             {
                 activeCollisionsX.Remove(i.item);
             }
              
         }
-
-        Debug.Log("active x: " + activeCollisionsX.Count);
         
         foreach (GameObjectWrapper i in ylist)
         {
 
             // i is a starting point, and active collisions doesn't already contain the gameobject we're looking at
-            if (i.isStart == true && activeCollisionsY.Contains(i.item) == false)
+            if (activeCollisionsY.Contains(i.item) == false)
             {
                 activeCollisionsY.Add(i.item);
 
@@ -164,19 +178,21 @@ public class SSCubeManager : MonoBehaviour
                     
                     foreach (GameObject item in activeCollisionsY)
                     {
-                        if (collisionsY.Contains(item) == false)
+                        if (currentCollisionsY.ContainsKey(i.item) == false)
                         {
-                            collisionsY.Add(item);
+                            currentCollisionsY[i.item] = new List<GameObject>();
+                            currentCollisionsY[i.item].Add(item);
                         }
-                        if (i.collidingWith.Contains(item) == false)
+
+                        if (currentCollisionsY[i.item].Contains(item) == false)
                         {
-                            i.collidingWith.Add(item);
+                            currentCollisionsY[i.item].Add(item);
                         }
                     }
                 }
             }
 
-            if (i.isStart == false && activeCollisionsY.Contains(i.item) == true)
+            else if (activeCollisionsY.Contains(i.item) == true)
             {
                 activeCollisionsY.Remove(i.item);
             }
@@ -188,7 +204,7 @@ public class SSCubeManager : MonoBehaviour
         {
 
             // i is a starting point, and active collisions doesn't already contain the gameobject we're looking at
-            if (i.isStart == true && activeCollisionsZ.Contains(i.item) == false)
+            if (activeCollisionsZ.Contains(i.item) == false)
             {
                 activeCollisionsZ.Add(i.item);
 
@@ -200,62 +216,66 @@ public class SSCubeManager : MonoBehaviour
 
                     foreach (GameObject item in activeCollisionsZ)
                     {
-                        if (collisionsZ.Contains(item) == false)
+                        if (currentCollisionsZ.ContainsKey(i.item) == false)
                         {
-                            collisionsZ.Add(item);
-                        }
+                            currentCollisionsZ[i.item] = new List<GameObject>();
+                            currentCollisionsZ[i.item].Add(item);
 
-                        if (i.collidingWith.Contains(item) == false)
+                        }
+                        if (currentCollisionsZ[i.item].Contains(item) == false)
                         {
-                            i.collidingWith.Add(item);
+                            currentCollisionsZ[i.item].Add(item);
                         }
                     }
                 }
             }
 
-            if (i.isStart == false && activeCollisionsZ.Contains(i.item) == true)
+            else if (activeCollisionsZ.Contains(i.item) == true)
             {
                 activeCollisionsZ.Remove(i.item);
             }
 
         }
-        
-        Debug.Log("x: " + collisionsX.Count.ToString());
-        Debug.Log("y: " + collisionsY.Count.ToString());
-        Debug.Log("z: " + collisionsZ.Count.ToString());
 
-        // search through every possible collision
-        foreach (GameObject item in collisionsX)
+
+        List<GameObject> totalCollisions = new List<GameObject>();
+
+        Debug.Log("current collisions x: " + currentCollisionsX.Count);
+
+        //search through the things that have collisions on the x-axis
+        foreach (GameObject item in currentCollisionsX.Keys)
         {
-            // for each x collision, search through the objects it collided with
-            foreach (GameObject collisionY in objectDictionary[item].collidingWith)
-            {
-                //if the item being searched is in THIS collisionY's colliding list, they are colliding together
+            // search through everything that the item is colliding with on the x axis
 
-                // do the same for z
+            foreach (GameObject i in currentCollisionsX[item])
+            {
+                if (currentCollisionsX.ContainsKey(i))
+                {
+                    if (currentCollisionsX[i].Contains(item))
+                    {
+                        // i and item are colliding on the x-axis
+
+                        totalCollisions.Add(item);
+                        totalCollisions.Add(i);
+                    }
+                }
             }
         }
-        
 
-    }
+        Debug.Log("total collisions: " + totalCollisions.Count);
 
-    void handleColliding()
-    {
-
-
-        Debug.Log("Collisions X "+collisionsX.Count.ToString());
-        Debug.Log("Collisions Y " + collisionsY.Count.ToString());
-        Debug.Log("Collisions Z " + collisionsZ.Count.ToString());
-      
-
-        
-        foreach (GameObjectWrapper item in xlist)
+        foreach (GameObject item in cubes)
         {
-            
-        } 
-        
+            if(totalCollisions.Contains(item))
+            {
+                item.renderer.material.color = Color.black;
+            }
 
-
+            else
+            {
+                item.renderer.material.color = Color.white;
+            }
+        }
 
     }
 
