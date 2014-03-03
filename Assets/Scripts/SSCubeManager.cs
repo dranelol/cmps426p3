@@ -142,13 +142,25 @@ public class SSCubeManager : MonoBehaviour
                     {
                         if (currentCollisionsX.ContainsKey(i.item) == false)
                         {
+                            
                             currentCollisionsX[i.item] = new List<GameObject>();
                             currentCollisionsX[i.item].Add(item);
                         }
 
-                        if (currentCollisionsX[i.item].Contains(item) == false)
+                        else
                         {
                             currentCollisionsX[i.item].Add(item);
+                        }
+
+                        if (currentCollisionsX.ContainsKey(item) == false)
+                        {
+                            currentCollisionsX[item] = new List<GameObject>();
+                            currentCollisionsX[item].Add(i.item);
+                        }
+
+                        else
+                        {
+                            currentCollisionsX[item].Add(i.item);
                         }
                         
                     }
@@ -254,9 +266,15 @@ public class SSCubeManager : MonoBehaviour
                     if (currentCollisionsX[i].Contains(item))
                     {
                         // i and item are colliding on the x-axis
+                        if (totalCollisions.Contains(item) == false)
+                        {
+                            totalCollisions.Add(item);
+                        }
 
-                        totalCollisions.Add(item);
-                        totalCollisions.Add(i);
+                        if (totalCollisions.Contains(i) == false)
+                        {
+                            totalCollisions.Add(i);
+                        }
                     }
                 }
             }
