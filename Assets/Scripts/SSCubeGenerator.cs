@@ -14,8 +14,8 @@ public class SSCubeGenerator : MonoBehaviour
     {
         nextGenTime = 0.0f;
         manager = GetComponent<SSCubeManager>();
-        
-        for (int i = 0; i < 4; i++)
+        /*
+        for (int i = 0; i < 10; i++)
         {
 
             Vector3 newScale = new Vector3((Random.Range(5, 20) / 10.0f), (Random.Range(5, 20) / 10.0f), (Random.Range(5, 20) / 10.0f));
@@ -31,14 +31,14 @@ public class SSCubeGenerator : MonoBehaviour
             manager.cubes.Add(newCube);
         }
         
-        
+        */
         
     }
 
     // Update is called once per frame
     void Update()
     {
-        /*
+        
         if (nextGenTime < 4.0f && Time.time > nextGenTime)
         {
 
@@ -69,6 +69,5 @@ public class SSCubeGenerator : MonoBehaviour
             nextGenTime += 1.0f;
         }
          
-        */
     }
 }
