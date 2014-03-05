@@ -30,10 +30,6 @@ public class SSCubeManager : MonoBehaviour
 
     public List<GameObject> cubes;
 
-    private List<GameObject> collisionsX;
-    private List<GameObject> collisionsY;
-    private List<GameObject> collisionsZ;
-
     private List<GameObject> activeCollisionsX;
     private List<GameObject> activeCollisionsY;
     private List<GameObject> activeCollisionsZ;
@@ -42,19 +38,16 @@ public class SSCubeManager : MonoBehaviour
     private List<GameObjectWrapper> ylist;
     private List<GameObjectWrapper> zlist;
 
-    private Dictionary<GameObject, GameObjectWrapper> objectDictionary;
-
     private List<GameObject> currentCollisionsX;
     private List<GameObject> currentCollisionsY;
     private List<GameObject> currentCollisionsZ;
+
+    private bool listsPopulated = false;
     
 
     // Use this for initialization
     void Start()
     {
-        collisionsX = new List<GameObject>();
-        collisionsY = new List<GameObject>();
-        collisionsZ = new List<GameObject>();
 
         activeCollisionsX = new List<GameObject>();
         activeCollisionsY = new List<GameObject>();
@@ -68,69 +61,58 @@ public class SSCubeManager : MonoBehaviour
         currentCollisionsY = new List<GameObject>();
         currentCollisionsZ = new List<GameObject>();
 
-        objectDictionary = new Dictionary<GameObject, GameObjectWrapper>();
+        
     }
 
     // Update is called once per frame
     void Update()
     {
-        collisionsX = new List<GameObject>();
-        collisionsY = new List<GameObject>();
-        collisionsZ = new List<GameObject>();
+        if (cubes.Count <= 200)
+        {
+            xlist = new List<GameObjectWrapper>();
+            ylist = new List<GameObjectWrapper>();
+            zlist = new List<GameObjectWrapper>();
+
+            foreach (GameObject item in cubes)
+            {
+
+                GameObjectWrapper tempXMin = new GameObjectWrapper(item.renderer.bounds.min.x, true, item);
+                GameObjectWrapper tempXMax = new GameObjectWrapper(item.renderer.bounds.max.x, false, item);
+
+
+                xlist.Add(tempXMin);
+                xlist.Add(tempXMax);
+
+                GameObjectWrapper tempYMin = new GameObjectWrapper(item.renderer.bounds.min.y, true, item);
+                GameObjectWrapper tempYMax = new GameObjectWrapper(item.renderer.bounds.max.y, false, item);
+
+                ylist.Add(tempYMin);
+                ylist.Add(tempYMax);
+
+                GameObjectWrapper tempZMin = new GameObjectWrapper(item.renderer.bounds.min.z, true, item);
+                GameObjectWrapper tempZMax = new GameObjectWrapper(item.renderer.bounds.max.z, false, item);
+
+                zlist.Add(tempZMin);
+                zlist.Add(tempZMax);
+
+                item.renderer.material.color = Color.white;
+            }
+        }
 
         activeCollisionsX = new List<GameObject>();
         activeCollisionsY = new List<GameObject>();
         activeCollisionsZ = new List<GameObject>();
 
-        xlist = new List<GameObjectWrapper>();
-        ylist = new List<GameObjectWrapper>();
-        zlist = new List<GameObjectWrapper>();
-
         currentCollisionsX = new List<GameObject>();
         currentCollisionsY = new List<GameObject>();
         currentCollisionsZ = new List<GameObject>();
-
-        objectDictionary = new Dictionary<GameObject, GameObjectWrapper>();
-
-        
-
-        foreach (GameObject item in cubes)
-        {
-
-            GameObjectWrapper tempXMin = new GameObjectWrapper(item.renderer.bounds.min.x, true, item);
-            GameObjectWrapper tempXMax = new GameObjectWrapper(item.renderer.bounds.max.x, false, item);
-            
-            
-            xlist.Add(tempXMin);
-            xlist.Add(tempXMax);
-
-            GameObjectWrapper tempYMin = new GameObjectWrapper(item.renderer.bounds.min.y, true, item);
-            GameObjectWrapper tempYMax = new GameObjectWrapper(item.renderer.bounds.max.y, false, item);
-
-            ylist.Add(tempYMin);
-            ylist.Add(tempYMax);
-
-            GameObjectWrapper tempZMin = new GameObjectWrapper(item.renderer.bounds.min.z, true, item);
-            GameObjectWrapper tempZMax = new GameObjectWrapper(item.renderer.bounds.max.z, false, item);
-
-            zlist.Add(tempZMin);
-            zlist.Add(tempZMax);
-
-            objectDictionary[item] = new GameObjectWrapper(0, false, item);
-
-            item.renderer.material.color = Color.white;
-
-            
-        }
 
         xlist.Sort(delegate(GameObjectWrapper a, GameObjectWrapper b) { return (a.f.CompareTo(b.f)); });
         ylist.Sort(delegate(GameObjectWrapper a, GameObjectWrapper b) { return (a.f.CompareTo(b.f)); });
         zlist.Sort(delegate(GameObjectWrapper a, GameObjectWrapper b) { return (a.f.CompareTo(b.f)); });
 
-
         foreach (GameObjectWrapper i in xlist)
         {
-
             // i is a starting point, and active collisions doesn't already contain the gameobject we're looking at
             if (activeCollisionsX.Contains(i.item) == false)
             {
@@ -141,14 +123,14 @@ public class SSCubeManager : MonoBehaviour
                 if (activeCollisionsX.Count >= 2)
                 {
                     // add everything in active collisions if it already isnt there
-                    
+
                     foreach (GameObject item in activeCollisionsX)
                     {
                         if (currentCollisionsX.Contains(item) == false)
                         {
                             currentCollisionsX.Add(item);
                         }
-                        
+
                     }
                 }
             }
@@ -157,9 +139,9 @@ public class SSCubeManager : MonoBehaviour
             {
                 activeCollisionsX.Remove(i.item);
             }
-             
+
         }
-        
+
         foreach (GameObjectWrapper i in ylist)
         {
 
@@ -173,7 +155,7 @@ public class SSCubeManager : MonoBehaviour
                 if (activeCollisionsY.Count >= 2)
                 {
                     // add everything in active collisions if it already isnt there
-                    foreach(GameObject item in activeCollisionsY)
+                    foreach (GameObject item in activeCollisionsY)
                     {
                         if (currentCollisionsX.Contains(item) == true)
                         {
@@ -190,7 +172,7 @@ public class SSCubeManager : MonoBehaviour
             {
                 activeCollisionsY.Remove(i.item);
             }
-             
+
         }
 
 
@@ -234,10 +216,6 @@ public class SSCubeManager : MonoBehaviour
 
         List<GameObject> totalCollisions = new List<GameObject>();
 
-        Debug.Log("current collisions x: " + currentCollisionsX.Count);
-        Debug.Log("current collisions y: " + currentCollisionsY.Count);
-        Debug.Log("current collisions z: " + currentCollisionsZ.Count);
-
         foreach (GameObject item1 in currentCollisionsZ)
         {
             foreach (GameObject item2 in currentCollisionsZ)
@@ -258,23 +236,36 @@ public class SSCubeManager : MonoBehaviour
             }
         }
 
-
-        Debug.Log("total collisions: " + totalCollisions.Count);
-
         foreach (GameObject item in cubes)
         {
-            if(totalCollisions.Contains(item))
+            if (totalCollisions.Contains(item))
             {
-                item.renderer.material.color = Color.black;
+                if (item.tag == "Player")
+                {
+                    item.renderer.material.color = Color.red;
+                }
+
+                else
+                {
+                    item.renderer.material.color = Color.black;
+                }
             }
 
             else
             {
-                item.renderer.material.color = Color.white;
+                if (item.tag == "Player")
+                {
+                    item.renderer.material.color = Color.cyan;
+                }
+                else
+                {
+                    item.renderer.material.color = Color.white;
+                }
             }
         }
-
     }
+
+    
 
     int CompareGameObjects(GameObjectWrapper a, GameObjectWrapper b)
     {
@@ -283,19 +274,6 @@ public class SSCubeManager : MonoBehaviour
 
     bool isColliding(GameObject a, GameObject b)
     {
-
-        /*
-         if (a.renderer.bounds.max.x < b.renderer.bounds.min.x ||
-            a.renderer.bounds.max.y < b.renderer.bounds.min.y ||
-            a.renderer.bounds.min.x > b.renderer.bounds.max.x ||
-            a.renderer.bounds.min.y > b.renderer.bounds.max.y ||
-            a.renderer.bounds.max.z < b.renderer.bounds.min.z ||
-             a.renderer.bounds.min.z > b.renderer.bounds.max.z)
-        {
-            return false;
-        }
-        
-        return true; */
 
         if (a.renderer.bounds.max.x < b.renderer.bounds.min.x)
         {
@@ -325,4 +303,6 @@ public class SSCubeManager : MonoBehaviour
 
 
     }
+
+    
 }

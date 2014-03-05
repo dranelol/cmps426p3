@@ -1,0 +1,42 @@
+Initialize engine version: 4.3.2f1 (0517a5ae8669)
+GfxDevice: creating device client; threaded=1
+Direct3D:
+    Version:  Direct3D 9.0c [aticfx32.dll 8.17.10.1191]
+    Renderer: AMD Radeon HD 7800 Series
+    Vendor:   ATI
+    VRAM:     2022 MB (via DXGI)
+    Caps:     Shader=30 DepthRT=1 NativeDepth=1 NativeShadow=1 DF16=1 INTZ=1 RAWZ=0 NULL=1 RESZ=1 SlowINTZ=1
+Begin MonoManager ReloadAssembly
+Platform assembly: C:\Users\Matt\Documents\GitHub\cmps426p3\astar_Data\Managed\UnityEngine.dll (this message is harmless)
+Loading C:\Users\Matt\Documents\GitHub\cmps426p3\astar_Data\Managed\UnityEngine.dll into Unity Child Domain
+Platform assembly: C:\Users\Matt\Documents\GitHub\cmps426p3\astar_Data\Managed\Assembly-CSharp.dll (this message is harmless)
+Loading C:\Users\Matt\Documents\GitHub\cmps426p3\astar_Data\Managed\Assembly-CSharp.dll into Unity Child Domain
+- Completed reload, in  0.052 seconds
+desktop: 2560x1440 60Hz; virtual: 4480x1440 at 0,0
+<RI> Initializing input.
+<RI> Input initialized.
+HandleD3DDeviceLost
+  HandleD3DDeviceLost: needs reset, doing it
+FullResetD3DDevice
+ResetD3DDevice
+dev->Reset
+D3Dwindow device not lost anymore
+NullReferenceException: Object reference not set to an instance of an object
+  at MazeColorHandler.NewPath (Int32 AI, System.Collections.Generic.List`1 closedList, System.Collections.Generic.List`1 openList, System.Collections.Generic.List`1 seenList) [0x00000] in <filename unknown>:0 
+  at AIBehaviour.Update () [0x00000] in <filename unknown>:0 
+ 
+(Filename:  Line: -1)
+
+UnloadTime: 15.649510 ms
+Unloading 3 Unused Serialized files (Serialized files now loaded: 0 / Dirty serialized files: 0)
+
+Unloading 2503 unused Assets to reduce memory usage. Loaded Objects now: 99.
+Total: 11.619946 ms (FindLiveObjects: 0.053150 ms CreateObjectMapping: 0.217408 ms MarkObjects: 0.058856 ms  DeleteObjects: 10.981833 ms)
+
+NullReferenceException
+  at (wrapper managed-to-native) UnityEngine.GameObject:get_renderer ()
+  at MazeColorHandler.NewPath (Int32 AI, System.Collections.Generic.List`1 closedList, System.Collections.Generic.List`1 openList, System.Collections.Generic.List`1 seenList) [0x00000] in <filename unknown>:0 
+  at AIBehaviour.Update () [0x00000] in <filename unknown>:0 
+ 
+(Filename:  Line: -1)
+

@@ -462,7 +462,6 @@ public class Pathfinder
 
         List<Vector3> noPath = new List<Vector3>();
         List<Vector3> onlyOpenList = new List<Vector3>();
-        List<Vector3> onlySeenList = new List<Vector3>();
 
         // convert each searchnode to a vector3 in screen space
         foreach (SearchNode item in openList)

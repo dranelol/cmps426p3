@@ -45,11 +45,25 @@ public class CubeManager : MonoBehaviour
         {
             if (collisions.Contains(item))
             {
-                item.renderer.material.color = Color.black;
+                if (item.tag == "Player")
+                {
+                    item.renderer.material.color = Color.red;
+                }
+                else
+                {
+                    item.renderer.material.color = Color.black;
+                }
             }
             else
             {
-                item.renderer.material.color = Color.white;
+                if (item.tag == "Player")
+                {
+                    item.renderer.material.color = Color.cyan;
+                }
+                else
+                {
+                    item.renderer.material.color = Color.white;
+                }
             }
         }
 

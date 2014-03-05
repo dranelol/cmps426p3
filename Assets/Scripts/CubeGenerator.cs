@@ -5,6 +5,7 @@ using System.Collections.Generic;
 public class CubeGenerator : MonoBehaviour 
 {
     public GameObject cube;
+    public GameObject player;
 
     private float nextGenTime;
     private CubeManager manager;
@@ -14,11 +15,19 @@ public class CubeGenerator : MonoBehaviour
     {
         nextGenTime = 0.0f;
         manager = GetComponent<CubeManager>();
+
+        GameObject playerCube = (GameObject)Instantiate(player, Vector3.zero, transform.rotation);
+        playerCube.transform.parent = transform;
+        playerCube.renderer.material.color = Color.cyan;
+        manager.cubes.Add(playerCube);
 	}
 	
 	// Update is called once per frame
 	void Update () 
     {
+        
+
+
         if (nextGenTime < 4.0f && Time.time > nextGenTime)
         {
             

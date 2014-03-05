@@ -8,42 +8,27 @@ public class SSCubeGenerator : MonoBehaviour
 
     private float nextGenTime;
     private SSCubeManager manager;
+    public GameObject player;
 
     // Use this for initialization
     void Start()
     {
         nextGenTime = 0.0f;
         manager = GetComponent<SSCubeManager>();
-        /*
-        for (int i = 0; i < 10; i++)
-        {
-
-            Vector3 newScale = new Vector3((Random.Range(5, 20) / 10.0f), (Random.Range(5, 20) / 10.0f), (Random.Range(5, 20) / 10.0f));
-
-            GameObject newCube = (GameObject)Instantiate(cube, Vector3.zero, transform.rotation);
-            newCube.renderer.material.color = Color.white;
-            newCube.transform.parent = transform;
-            newCube.transform.localScale = newScale;
-            newCube.rigidbody.velocity = Vector3.zero;
-            newCube.rigidbody.isKinematic = true;
-
-
-            manager.cubes.Add(newCube);
-        }
-        
-        */
+        GameObject playerCube = (GameObject)Instantiate(player, Vector3.zero, transform.rotation);
+        playerCube.transform.parent = transform;
+        playerCube.renderer.material.color = Color.cyan;
+        manager.cubes.Add(playerCube);
         
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+
         if (nextGenTime < 4.0f && Time.time > nextGenTime)
         {
-
-
-            int spawnCount = 10;
+            int spawnCount = 50;
 
             while (spawnCount > 0)
             {
@@ -68,6 +53,7 @@ public class SSCubeGenerator : MonoBehaviour
 
             nextGenTime += 1.0f;
         }
+
          
     }
 }

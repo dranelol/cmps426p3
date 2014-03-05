@@ -96,8 +96,6 @@ public class MazeColorHandler : MonoBehaviour {
 
         else
         {
-            int b = 0;
-            // reset all from 2
 
             
             if (closedList2.Count > 0)

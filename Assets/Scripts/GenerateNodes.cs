@@ -57,7 +57,6 @@ public class GenerateNodes : MonoBehaviour {
 
     private void GenerateWalls()
     {
-        int TotalNodes = NodesX * NodesY;
         for (int i = 0; i < NodesX; i++)
         {
             for (int j = 0; j < NodesY; j++)
